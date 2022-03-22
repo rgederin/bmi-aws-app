@@ -1,27 +1,62 @@
 import * as dynamoose from 'dynamoose';
 import { Model } from 'dynamoose/dist/Model';
-import { BmiModel } from './BmiModel';
-import { BmiSchema } from './BmiSchema';
-import { BmiItem } from './BmiItem'
+import { Document } from 'dynamoose/dist/Document';
+
+export interface BmiItem {
+    id: string,
+    ip: string,
+    weight: number,
+    height: number
+};
+
+class BmiModel extends Document {
+    Id = '';
+    Ip = '';
+    Weight = 0;
+    Height = 0
+}
+
+const bmiDynamodbSchema = new dynamoose.Schema({
+    Id: {
+        type: String,
+        hashKey: true,
+        required: true
+    },
+    Ip: {
+        type: String,
+        required: true
+    },
+    Weight: {
+        type: Number,
+        required: true
+    },
+    Height: {
+        type: Number,
+        required: true
+    }
+}, {
+    "timestamps": true
+});
+
 
 export class BmiRepository {
     private dynamoInstance: Model<BmiModel>;
 
     constructor() {
-        this.dynamoInstance = dynamoose.model<BmiModel>('bmi-table', BmiSchema);
+        this.dynamoInstance = dynamoose.model<BmiModel>('bmi-table', bmiDynamodbSchema);
     }
 
-    addBmiItem = async (bmiItem: BmiItem) => {
-        return await this.dynamoInstance.create({
-            Id: bmiItem.Id,
-            Ip: bmiItem.Ip,
-            Weight: bmiItem.Weight,
-            Height: bmiItem.Height
+    createBmiEntry = async (bmiItem: BmiItem) => {
+        this.dynamoInstance.create({
+            Id: bmiItem.id,
+            Ip: bmiItem.ip,
+            Weight: bmiItem.weight,
+            Height: bmiItem.height
         });
     };
 
     getBmiById = async (id: number) => {
-        return await this.dynamoInstance.get({ Id: id });
+        return this.dynamoInstance.get({ Id: id });
     };
 }
 
