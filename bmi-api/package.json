@@ -23,9 +23,11 @@
     "lodash": "^4.17.21",
     "pino": "^7.9.1",
     "pino-pretty": "^7.5.4",
+    "uuid": "^8.3.2",
     "zod": "^3.14.2"
   },
   "devDependencies": {
+    "@types/uuid": "^8.3.4",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.6.2"
   }

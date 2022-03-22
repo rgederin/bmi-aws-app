@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 import { calculateBmiHandler } from "./controller/bmi.controller";
 import { validate } from "./middleware/validateResource";
-import { bmiRequestSchema } from "./schema/bmi.request.schema";
+import { bmiRequestSchema } from "./types/bmi.request";
 const routes = (app: Express) => {
 
 

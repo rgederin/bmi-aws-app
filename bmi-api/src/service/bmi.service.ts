@@ -1,43 +1,49 @@
-import { BmiRepository, BmiItem } from "../dynamodb/bmi.repository";
-
+import { v4 as uuidv4 } from 'uuid';
+import { BmiRepository } from "../dynamodb/bmi.repository";
+import { BmiItem } from "../types/bmi.dynamodb.item";
+import { BmiResponse } from "../types/bmi.response";
 const bmiRepository = new BmiRepository()
 
-export const handleBmi = (bmiItem: BmiItem) => {
-    
-    const bmiResult = calculateBmi(bmiItem.weight, bmiItem.height);
+export const handleBmiCalculation = (weight: number, height: number): BmiResponse => {
+    const bmiResult = calculateBmi(weight, height);
 
-    createBmiEntry(bmiItem);
+    const bmiItem = {
+        id: uuidv4(),
+        weight: weight,
+        height: height
+    }
+    saveBmiItemInDynamodb(bmiItem);
 
     return bmiResult;
 }
 
 const calculateBmi = (weight: number, height: number) => {
-    const bmi = (weight / (height * height));
+    const index = (weight / (height * height));
 
-    let index: string;
+    let result: string;
 
-    if (bmi < 18.5) {
-        index = "under weight";
+    if (index < 18.5) {
+        result = "under weight";
     }
 
-    else if (bmi >= 18.5 && bmi <= 24.9) {
-        index = "normal weight";
+    else if (index >= 18.5 && index <= 24.9) {
+        result = "normal weight";
     }
 
-    else if (bmi > 24.9 && bmi <= 29.9) {
-        index = "over weight";
+    else if (index > 24.9 && index <= 29.9) {
+        result = "over weight";
     }
     else {
-        index = "obesity";
+        result = "obesity";
     }
 
     return {
-        bmi: bmi,
-        result: index
+        bmi: index,
+        result: result
     }
 }
 
-const createBmiEntry = async (bmi: BmiItem): Promise<void> => {
+const saveBmiItemInDynamodb = async (bmi: BmiItem): Promise<void> => {
     try {
         bmiRepository.createBmiEntry(bmi);
     } catch (e: any) {

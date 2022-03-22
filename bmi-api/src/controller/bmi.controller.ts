@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { handleBmi } from "../service/bmi.service";
-import { BmiInput } from "../schema/bmi.request.schema";
+import { handleBmiCalculation } from "../service/bmi.service";
+import { BmiRequest } from "../types/bmi.request";
+import { BmiResponse } from "../types/bmi.response";
 
 
-export const calculateBmiHandler = async (req: Request<{}, {}, BmiInput['body']>, res: Response) => {
+export const calculateBmiHandler = (req: Request<{}, {}, BmiRequest['body']>, res: Response): Response<BmiResponse> => {
     try {
-        console.log('calc bmi handler')
+        const bmi = handleBmiCalculation(req.body.weight, req.body.height);
 
-        console.log(req.body);
-        const bmi = handleBmi(req.body);
         return res.status(200).send(bmi);
     } catch (e: any) {
         return res.status(409).send(e.message)
