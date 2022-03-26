@@ -1,23 +1,25 @@
-import { v4 as uuidv4 } from 'uuid';
+import logger from "../util/logger";
 import { BmiRepository } from "../dynamodb/bmi.repository";
 import { BmiItem } from "../types/bmi.dynamodb.item";
 import { BmiResponse } from "../types/bmi.response";
+
 const bmiRepository = new BmiRepository()
 
-export const handleBmiCalculation = (weight: number, height: number): BmiResponse => {
+export const handleBmiCalculation = (id: string, weight: number, height: number): BmiResponse => {
     const bmiResult = calculateBmi(weight, height);
 
-    const bmiItem = {
-        id: uuidv4(),
-        weight: weight,
-        height: height
-    }
-    saveBmiItemInDynamodb(bmiItem);
+    logger.info(`bmi for request id ${id} = ${bmiResult.bmi}`)
+
+    saveBmiItemInDynamodb({ id, weight, height }).then(() => {
+        logger.info(`request ${id} saved in dynamodb`)
+    }).catch((error) => {
+        logger.info(`request id ${id} was not saved in dynamodb: ${error}`)
+    });
 
     return bmiResult;
 }
 
-const calculateBmi = (weight: number, height: number) => {
+const calculateBmi = (weight: number, height: number): BmiResponse => {
     const index = (weight / (height * height));
 
     let result: string;

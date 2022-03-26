@@ -1,7 +1,8 @@
-import { object, number, TypeOf } from 'zod'
+import { object, optional, number, TypeOf, string } from 'zod'
 
 export const bmiRequestSchema = object({
     body: object({
+        id: optional(string()),
         weight: number({
             required_error: 'Weight is required for BMI calculation'
         }),
