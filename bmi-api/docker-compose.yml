@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  bmi-api-service:
+    container_name: bmi-api-image
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
+    build:
+        context: ./ 
+    ports:
+      - 1337:1337
