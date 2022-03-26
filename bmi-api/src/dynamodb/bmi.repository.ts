@@ -8,7 +8,16 @@ export class BmiRepository {
     private dynamoInstance: Model<BmiModel>;
 
     constructor() {
-        this.dynamoInstance = dynamoose.model<BmiModel>('bmi-table', bmiDynamodbSchema);
+        const env = process.env.NODE_ENV;
+        const modelOptions = {
+            create: true
+        };
+
+        if (env === 'production' || env === 'staging') {
+            modelOptions.create = false
+        }
+
+        this.dynamoInstance = dynamoose.model<BmiModel>('bmi-table', bmiDynamodbSchema, modelOptions);
     }
 
     createBmiEntry = (bmiItem: BmiItem) => {
