@@ -1,12 +1,16 @@
 import * as aws from 'aws-sdk'
 import { BmiResponse } from '../types/bmi.response';
+import config from 'config'
+import logger from "../util/logger";
 
-aws.config.update({ region: 'us-west-2' });
+const sendBmiMessage = async (bmiResult: BmiResponse): Promise<void> => {
+    const sqs = new aws.SQS({ apiVersion: '2012-11-05' });
 
-export const sendBmiResultInSqs = (bmiResult: BmiResponse) => {
-    var sqs = new aws.SQS({ apiVersion: '2012-11-05' });
+    aws.config.update({
+        region: config.get<string>('region')
+    });
 
-    var params = {
+    const params = {
         DelaySeconds: 10,
         MessageAttributes: {
             "request_id": {
@@ -23,16 +27,17 @@ export const sendBmiResultInSqs = (bmiResult: BmiResponse) => {
             }
         },
         MessageBody: `bmi calculation result for ${bmiResult.id}`,
-
-        QueueUrl: "https://sqs.us-west-2.amazonaws.com/530260462866/test-sqs"
+        QueueUrl: config.get<string>('sqsUrl')
     };
 
-    sqs.sendMessage(params, function (err, data) {
+    sqs.sendMessage(params, (err, data) => {
         if (err) {
-            console.log("Error", err);
+            logger.error(`error while sending bmi message ${bmiResult.id} in sqs: ${err}`)
         } else {
-            console.log("Success", data.MessageId);
+            logger.info(`bmi message ${bmiResult.id} sent in sqs`)
         }
     });
-}
+};
+
+export default sendBmiMessage;
 

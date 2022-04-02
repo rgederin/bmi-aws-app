@@ -2,7 +2,7 @@ import logger from "../util/logger";
 import { BmiRepository } from "../dynamodb/bmi.repository";
 import { BmiItem } from "../types/bmi.dynamodb.item";
 import { BmiResponse } from "../types/bmi.response";
-import { sendBmiResultInSqs } from "../sqs/sqs.setup"
+import sendBmiResult from "../sqs/sqs.sender"
 
 const bmiRepository = new BmiRepository()
 
@@ -19,7 +19,8 @@ export const handleBmiCalculation = (id: string, weight: number, height: number)
 
     bmiResult.id = id;
 
-    sendBmiResultInSqs(bmiResult)
+    sendBmiResult(bmiResult);
+
     return bmiResult;
 }
 
