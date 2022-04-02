@@ -2,6 +2,7 @@ import logger from "../util/logger";
 import { BmiRepository } from "../dynamodb/bmi.repository";
 import { BmiItem } from "../types/bmi.dynamodb.item";
 import { BmiResponse } from "../types/bmi.response";
+import { sendBmiResultInSqs } from "../sqs/sqs.setup"
 
 const bmiRepository = new BmiRepository()
 
@@ -16,6 +17,9 @@ export const handleBmiCalculation = (id: string, weight: number, height: number)
         logger.info(`request id ${id} was not saved in dynamodb: ${error}`)
     });
 
+    bmiResult.id = id;
+
+    sendBmiResultInSqs(bmiResult)
     return bmiResult;
 }
 
