@@ -1,15 +1,9 @@
-import * as aws from 'aws-sdk'
+import { sqs } from '../aws'
 import { BmiResponse } from '../types/bmi.response';
 import config from 'config'
 import logger from "../util/logger";
 
 const sendBmiMessage = async (bmiResult: BmiResponse): Promise<void> => {
-    const sqs = new aws.SQS({ apiVersion: '2012-11-05' });
-
-    aws.config.update({
-        region: config.get<string>('region')
-    });
-
     const params = {
         DelaySeconds: 10,
         MessageAttributes: {

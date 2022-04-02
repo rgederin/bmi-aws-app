@@ -1,15 +1,8 @@
-import * as AWS from 'aws-sdk'
+import { sns } from '../aws'
 import config from 'config'
 import logger from "../util/logger";
 
-AWS.config.update({
-    region: config.get<string>('region')
-});
-
-const sns = new AWS.SNS();
-
 const pushSnsNotification = async (message: string) => {
-
     const params = {
         Message: JSON.stringify(message),
         TopicArn: config.get<string>('snsTopicArn'),
