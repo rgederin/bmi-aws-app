@@ -8,7 +8,11 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - AWS_REGION=${AWS_REGION}
+      - DYNAMODB_TABLE=bmi-table
+      - SQS_URL=https://sqs.us-west-2.amazonaws.com/530260462866/test-sqs
+      - TOPIC_URL=arn:aws:sns:us-west-2:530260462866:test-sns-topic
     build:
+        name: bmi-api-image
         context: ./ 
     ports:
       - 1337:1337

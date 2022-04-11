@@ -10,10 +10,11 @@ const port = config.get<number>('port')
 const app = express();
 app.use(express.json());
 
+setInterval(() => pushSnsNotification('bmi-api service is alive'), 60 * 1000);
+
 app.listen(port, async () => {
     setupDynamodb();
     routes(app);
 
-    pushSnsNotification('test');
     logger.info(`app is running at http://localhost:${port}`)
 }) 

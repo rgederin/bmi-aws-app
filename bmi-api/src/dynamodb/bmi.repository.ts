@@ -3,6 +3,8 @@ import { Model } from 'dynamoose/dist/Model';
 import { BmiModel } from '../types/bmi.dynamodb.model';
 import { bmiDynamodbSchema } from './bmi.dynamodb.schema';
 import { BmiItem } from '../types/bmi.dynamodb.item'
+import config from 'config'
+
 
 export class BmiRepository {
     private dynamoInstance: Model<BmiModel>;
@@ -17,7 +19,7 @@ export class BmiRepository {
             modelOptions.create = false
         }
 
-        this.dynamoInstance = dynamoose.model<BmiModel>('bmi-table', bmiDynamodbSchema, modelOptions);
+        this.dynamoInstance = dynamoose.model<BmiModel>(config.get('dynamodbTable'), bmiDynamodbSchema, modelOptions);
     }
 
     createBmiEntry = (bmiItem: BmiItem) => {
