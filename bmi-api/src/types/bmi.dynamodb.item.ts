@@ -1,5 +1,5 @@
 export interface BmiItem {
     id: string,
-    weight: number;
+    weight: number,
     height: number
 }
